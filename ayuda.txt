@@ -1,0 +1,111 @@
+Este archivo debe incluir, como mínimo:
+• Comandos de git utilizados (crear repositorio, ramas…).
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin linkRepo
+git push -u origin main
+git push -u origin nombreBranch
+• Ejemplos de tipado en TypeScript (interfaces, tipos primitivos, arrays, funciones…).
+export interface Producto {
+    id:number
+    nombre:string
+    categoria:string
+    stock:number
+}
+
+export const productos:Producto[] = [
+    
+    {
+        "id" : 1,
+        "nombre":"Teclado",
+        "categoria":"Periféricos",
+        "stock":10
+    },
+]
+
+• Estructura general de un servicio con Promesas:
+import {productos} from "../data/info"
+import {Producto} from "../domain/entities/producto"
+
+
+export const getProductosPorCategoria = async(categoria:string) : Promise<Producto[]> => {
+    console.log("Entre a getProductosPorCategoriaService")
+
+    //Se crea la promesa y se genera la latencia con setTimeout
+    const promise:Promise<Producto[]> = new Promise((resolve,reject) =>{
+        setTimeout(()=>{
+            const productosPorCategoria = productos.filter(prod => prod.categoria === categoria)
+            if (productosPorCategoria.length > 0){
+                resolve(productosPorCategoria)
+            }else{
+                reject(`No se encontraron productos en la categoría ${categoria}`)
+            }
+        },1000)
+    })
+
+    return promise
+}
+
+
+• Forma de consumir promesas con:
+const mostrarProductoThenCatch = (id:number) : void => {
+    console.log("Entre a mostrarProductoThenCatch")
+    getProductoService(id).then((producto:String)=>{
+        console.log("Entro a then")
+        result.innerHTML = ""
+        console.log(producto," Producto")
+        result.textContent = `Producto: ${producto}`
+
+    }).catch((error)=>{
+        console.log("Entro a catch")
+        console.error(error, " Error")
+        result.textContent = error instanceof Error ? error.message : "Error Inesperado"
+    })
+}
+
+const mostrarProductoAsincAwait = async(categoria:string) : Promise<void> => {
+    console.log("Entre a mostrarProductoAsincAwait")
+    try{
+        const productos = await getProductosPorCategoria(categoria)
+        console.table(productos)
+        result.innerHTML = ""
+        productos.forEach(pod => {
+            const p = document.createElement("p")
+            p.textContent = `ID: ${pod.id} - Nombre: ${pod.nombre} - Categoria: ${pod.categoria} - Stock: ${pod.stock}`
+            result.appendChild(p)
+        });
+    }catch(error){
+        console.error(error, " Error")
+        result.textContent = error instanceof Error ? error.message : "Error Inesperado"
+    }
+}
+
+• Recordatorios de estructuras clave que puedan necesitar en el examen:
+.filter-> para buscar varios valores
+.find->para buscar por id
+.Ejemplo .gitignore para ts:
+# Dependencies
+/node_modules
+
+# Build output
+/dist
+/build
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# IDE configuration
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+.npm i -D typescript ---> instala el compilador del proyect
+.npx tsc             ---> compila y emite los archivos JS donde indica nuestro tsconfig.js (por eso aparece dist/)
